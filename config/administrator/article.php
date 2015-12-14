@@ -15,10 +15,16 @@ return array(
 			'output' => function ($output) {
 				$output = json_decode($output, true);
 				$key = array_search(config('languages')['default'], array_column($output, 'locale'));
-				return $output[$key]['title'];
+				return $output[$key]['body'];
 			},
 
 		),
+		// 'translations' => array(
+		// 	'title' => 'body',
+		// 	'relationship' => 'translations',
+		// 	'name_field' => 'body',
+		// 	'select' => '(:table).body',
+		// ),
 
 	),
 	'edit_fields' => array(
