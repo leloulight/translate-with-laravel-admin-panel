@@ -19,10 +19,16 @@ return array(
 			},
 
 		),
+
 	),
 	'edit_fields' => array(
 		'title' => array(
-			'title' => 'Enter en Text',
+			'title' => 'Title',
+			'type' => 'translations',
+
+		),
+		'body' => array(
+			'title' => 'Body',
 			'type' => 'translations',
 
 		),

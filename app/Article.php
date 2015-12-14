@@ -26,7 +26,7 @@ class Article extends Model implements IsTranslatable {
 	 *
 	 * @var string[]
 	 */
-	protected $translatedAttributes = ['title'];
+	protected $translatedAttributes = ['title', 'body'];
 
 	/**
 	 * Get the translations relation.
