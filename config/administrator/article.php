@@ -15,27 +15,33 @@ return array(
 			'output' => function ($output) {
 				$output = json_decode($output, true);
 				$key = array_search(config('languages')['default'], array_column($output, 'locale'));
+				return $output[$key]['title'];
+			},
+
+		),
+		'translationsbody' => array(
+			'type' => 'relationship',
+			'title' => 'Title',
+			'sortable' => 'false',
+			'name_field' => 'title',
+			'output' => function ($output) {
+				$output = json_decode($output, true);
+				$key = array_search(config('languages')['default'], array_column($output, 'locale'));
 				return $output[$key]['body'];
 			},
 
 		),
-		// 'translations' => array(
-		// 	'title' => 'body',
-		// 	'relationship' => 'translations',
-		// 	'name_field' => 'body',
-		// 	'select' => '(:table).body',
-		// ),
 
 	),
 	'edit_fields' => array(
 		'title' => array(
 			'title' => 'Title',
-			'type' => 'translations',
+			'type' => 'text',
 
 		),
 		'body' => array(
-			'title' => 'Body',
-			'type' => 'translations',
+			'title' => 'body',
+			'type' => 'wysiwyg',
 
 		),
 	),

@@ -36,4 +36,7 @@ class Article extends Model implements IsTranslatable {
 	public function translations() {
 		return $this->hasMany(ArticleTranslation::class);
 	}
+	public function translationsbody() {
+		return $this->hasMany(ArticleTranslation::class);
+	}
 }
