@@ -49,4 +49,5 @@ return array(
 		'field' => 'ID',
 		'direction' => 'asc',
 	),
+	'form_width' => 600,
 );
