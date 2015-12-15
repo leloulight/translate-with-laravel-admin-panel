@@ -39,4 +39,7 @@ class Article extends Model implements IsTranslatable {
 	public function translationsbody() {
 		return $this->hasMany(ArticleTranslation::class);
 	}
+	public function Picture() {
+		return $this->hasMany(ArticlePicture::class);
+	}
 }

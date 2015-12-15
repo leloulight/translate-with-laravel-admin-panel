@@ -28,15 +28,14 @@ class Image extends File {
 	 *
 	 * @return array
 	 */
-	public function doUpload()
-	{
+	public function doUpload() {
 		//use the multup library to perform the upload
 		$result = Multup::open('file', 'image|max:' . $this->getOption('size_limit') * 1000, $this->getOption('location'),
-									$this->getOption('naming') === 'random')
+			$this->getOption('naming') === 'random')
 			->sizes($this->getOption('sizes'))
 			->set_length($this->getOption('length'))
 			->upload();
-
+		// dd($result);
 		return $result[0];
 	}
 
@@ -45,8 +44,7 @@ class Image extends File {
 	 *
 	 * @return array
 	 */
-	public function getRules()
-	{
+	public function getRules() {
 		$rules = parent::getRules();
 
 		return array_merge($rules, $this->imageRules);
@@ -57,8 +55,7 @@ class Image extends File {
 	 *
 	 * @return array
 	 */
-	public function getDefaults()
-	{
+	public function getDefaults() {
 		$defaults = parent::getDefaults();
 
 		return array_merge($defaults, $this->imageDefaults);
