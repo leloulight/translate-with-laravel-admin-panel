@@ -11,7 +11,6 @@
 
 namespace Vinkla\Translator;
 
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 
 /**
@@ -19,162 +18,150 @@ use Illuminate\Support\Facades\Config;
  *
  * @author Vincent Klaiber <hello@vinkla.com>
  */
-trait Translatable
-{
-    /**
-     * The translations cache.
-     *
-     * @var array
-     */
-    protected $cache = [];
+trait Translatable {
+	/**
+	 * The translations cache.
+	 *
+	 * @var array
+	 */
+	protected $cache = [];
 
-    /**
-     * Get a translation.
-     *
-     * @param string|null $locale
-     * @param bool $fallback
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null|static
-     */
-    public function translate($locale = null, $fallback = true)
-    {
-        $locale = $locale ?: $this->getLocale();
+	/**
+	 * Get a translation.
+	 *
+	 * @param  string|null                                       $locale
+	 * @param  bool                                              $fallback
+	 * @return \Illuminate\Database\Eloquent\Model|null|static
+	 */
+	public function translate($locale = null, $fallback = true) {
+		$locale = $locale ?: $this->getLocale();
 
-        $translation = $this->getTranslation($locale);
+		$translation = $this->getTranslation($locale);
+		// dd($translation);
+		if (!$translation && $fallback) {
+			$translation = $this->getTranslation($this->getFallback());
+			// dd($translation);
+		}
 
-        if (!$translation && $fallback) {
-            $translation = $this->getTranslation($this->getFallback());
-        }
+		if (!$translation && !$fallback) {
+			foreach ($this->translatedAttributes as $attribute) {
+				$translation = $this->setAttribute($attribute, null);
+				// dd($translation);
+			}
+		}
+		// dd($translation);
+		return $translation;
+	}
 
-        if (!$translation && !$fallback) {
-            foreach ($this->translatedAttributes as $attribute) {
-                $translation = $this->setAttribute($attribute, null);
-            }
-        }
+	/**
+	 * Get a translation or create new.
+	 *
+	 * @param  string                                       $locale
+	 * @return \Illuminate\Database\Eloquent\Model|static
+	 */
+	protected function translateOrNew($locale) {
+		$translation = $this->translate($locale);
 
-        return $translation;
-    }
+		if (!$translation) {
+			$translation = $this->translations()
+				->where('locale', $locale)
+				->firstOrNew(['locale' => $locale]);
+		}
+		// dd($translation);
+		return $translation;
+	}
 
-    /**
-     * Get a translation or create new.
-     *
-     * @param string $locale
-     *
-     * @return \Illuminate\Database\Eloquent\Model|static
-     */
-    protected function translateOrNew($locale)
-    {
-        $translation = $this->translate($locale);
+	/**
+	 * Get a translation.
+	 *
+	 * @param  string                                            $locale
+	 * @return \Illuminate\Database\Eloquent\Model|static|null
+	 */
+	protected function getTranslation($locale) {
+		if (isset($this->cache[$locale])) {
+			return $this->cache[$locale];
+		}
 
-        if (!$translation) {
-            $translation = $this->translations()
-                ->where('locale', $locale)
-                ->firstOrNew(['locale' => $locale]);
-        }
+		$translation = $this->translations()
+			->where('locale', $locale)
+			->first();
+		// dd($translation);
+		if ($translation) {
+			$this->cache[$locale] = $translation;
+		}
+		// dd($translation);
+		return $translation;
+	}
 
-        return $translation;
-    }
+	/**
+	 * Get an attribute from the model or translation.
+	 *
+	 * @param  string  $key
+	 * @return mixed
+	 */
+	public function getAttribute($key) {
 
-    /**
-     * Get a translation.
-     *
-     * @param string $locale
-     *
-     * @return \Illuminate\Database\Eloquent\Model|static|null
-     */
-    protected function getTranslation($locale)
-    {
-        if (isset($this->cache[$locale])) {
-            return $this->cache[$locale];
-        }
+		if (in_array($key, $this->translatedAttributes)) {
+			return $this->translate() ? $this->translate()->$key : null;
+		}
 
-        $translation = $this->translations()
-            ->where('locale', $locale)
-            ->first();
+		return parent::getAttribute($key);
+	}
 
-        if ($translation) {
-            $this->cache[$locale] = $translation;
-        }
+	/**
+	 * Set a given attribute on the model or translation.
+	 *
+	 * @param  string  $key
+	 * @param  mixed   $value
+	 * @return mixed
+	 */
+	public function setAttribute($key, $value) {
+		if (in_array($key, $this->translatedAttributes)) {
+			$translation = $this->translateOrNew($this->getLocale());
 
-        return $translation;
-    }
+			$translation->$key = $value;
+			// dd($this->translatedAttributes);
+			return $this->cache[$this->getLocale()] = $translation;
+		}
 
-    /**
-     * Get an attribute from the model or translation.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getAttribute($key)
-    {
-        if (in_array($key, $this->translatedAttributes)) {
-            return $this->translate() ? $this->translate()->$key : null;
-        }
+		return parent::setAttribute($key, $value);
+	}
 
-        return parent::getAttribute($key);
-    }
+	/**
+	 * Finish processing on a successful save operation.
+	 *
+	 * @param  array  $options
+	 * @return void
+	 */
+	protected function finishSave(array $options) {
+		$this->translations()->saveMany($this->cache);
 
-    /**
-     * Set a given attribute on the model or translation.
-     *
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return mixed
-     */
-    public function setAttribute($key, $value)
-    {
-        if (in_array($key, $this->translatedAttributes)) {
-            $translation = $this->translateOrNew($this->getLocale());
+		parent::finishSave($options);
+	}
 
-            $translation->$key = $value;
+	/**
+	 * Get the locale.
+	 *
+	 * @return string
+	 */
+	protected function getLocale() {
+		// var_dump(config('languages')['default']);exit;
+		return config('languages')['default'];
+	}
 
-            return $this->cache[$this->getLocale()] = $translation;
-        }
+	/**
+	 * Get the fallback locale.
+	 *
+	 * @return string
+	 */
+	protected function getFallback() {
+		return Config::get('app.fallback_locale');
+	}
 
-        return parent::setAttribute($key, $value);
-    }
-
-    /**
-     * Finish processing on a successful save operation.
-     *
-     * @param array $options
-     *
-     * @return void
-     */
-    protected function finishSave(array $options)
-    {
-        $this->translations()->saveMany($this->cache);
-
-        parent::finishSave($options);
-    }
-
-    /**
-     * Get the locale.
-     *
-     * @return string
-     */
-    protected function getLocale()
-    {
-        // var_dump(config('languages')['default']);exit;
-        return config('languages')['default'];
-    }
-
-    /**
-     * Get the fallback locale.
-     *
-     * @return string
-     */
-    protected function getFallback()
-    {
-        return Config::get('app.fallback_locale');
-    }
-
-    /**
-     * Get the translations relation.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    abstract public function translations();
+	/**
+	 * Get the translations relation.
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	abstract public function translations();
 }

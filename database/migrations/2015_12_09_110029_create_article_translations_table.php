@@ -14,6 +14,7 @@ class CreateArticleTranslationsTable extends Migration {
 			$table->increments('id');
 
 			$table->string('title'); // Translated column.
+			$table->text('body');
 
 			$table->integer('article_id')->unsigned()->index();
 

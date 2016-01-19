@@ -33,16 +33,16 @@ class File extends Field {
 	/**
 	 * Builds a few basic options
 	 */
-	public function build()
-	{
+	public function build() {
 		parent::build();
 
 		//set the upload url depending on the type of config this is
 		$url = $this->validator->getUrlInstance();
 		$route = $this->config->getType() === 'settings' ? 'admin_settings_file_upload' : 'admin_file_upload';
-
+		// dd($url);
 		//set the upload url to the proper route
 		$this->suppliedOptions['upload_url'] = $url->route($route, array($this->config->getOption('name'), $this->suppliedOptions['field_name']));
+		// dd($this->suppliedOptions['upload_url']);
 	}
 
 	/**
@@ -50,16 +50,15 @@ class File extends Field {
 	 *
 	 * @return array
 	 */
-	public function doUpload()
-	{
+	public function doUpload() {
 		$mimes = $this->getOption('mimes') ? '|mimes:' . $this->getOption('mimes') : '';
 
 		//use the multup library to perform the upload
 		$result = Multup::open('file', 'max:' . $this->getOption('size_limit') * 1000 . $mimes, $this->getOption('location'),
-									$this->getOption('naming') === 'random')
+			$this->getOption('naming') === 'random')
 			->set_length($this->getOption('length'))
 			->upload();
-
+		// dd($result);
 		return $result[0];
 	}
 }

@@ -91,13 +91,16 @@ class AdminController extends Controller {
 			));
 
 			reset($fields);
-			$key = key($fields);
-			$fieldType = get_class($fields[$key]);
-			if ("Frozennode\Administrator\Fields\Translations" == $fieldType) {
-				$ar = $response->getContent();
-				$ar = json_decode($ar);
-				$ar->title = $model->title;
-				$response->setData($ar);
+			foreach ($fields as $key => $field) {
+
+				$fieldType = get_class($fields[$key]);
+
+				if ("Frozennode\Administrator\Fields\Text" == $fieldType) {
+					$ar = $response->getContent();
+					$ar = json_decode($ar);
+					$ar->$key = $model->$key;
+					$response->setData($ar);
+				}
 			}
 
 			// dd($response);

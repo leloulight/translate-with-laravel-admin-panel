@@ -26,7 +26,7 @@ class Article extends Model implements IsTranslatable {
 	 *
 	 * @var string[]
 	 */
-	protected $translatedAttributes = ['title'];
+	protected $translatedAttributes = ['title', 'body'];
 
 	/**
 	 * Get the translations relation.
@@ -35,5 +35,11 @@ class Article extends Model implements IsTranslatable {
 	 */
 	public function translations() {
 		return $this->hasMany(ArticleTranslation::class);
+	}
+	public function translationsbody() {
+		return $this->hasMany(ArticleTranslation::class);
+	}
+	public function Picture() {
+		return $this->hasMany(ArticlePicture::class);
 	}
 }

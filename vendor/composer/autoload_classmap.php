@@ -6,11 +6,11 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AddPictureColumnToArticlesTable' => $baseDir . '/database/migrations/2015_12_15_101437_add_picture_column_to_articles_table.php',
+    'CreateArticlePicturesTable' => $baseDir . '/database/migrations/2015_12_15_093514_create_article_pictures_table.php',
     'CreateArticleTable' => $baseDir . '/database/migrations/2015_12_09_110017_create_article_table.php',
     'CreateArticleTranslationsTable' => $baseDir . '/database/migrations/2015_12_09_110029_create_article_translations_table.php',
-    'CreateBodiesTable' => $baseDir . '/database/migrations/2015_12_14_065832_create_bodies_table.php',
-    'CreateBodyTranslationsTable' => $baseDir . '/database/migrations/2015_12_14_070040_create_body_translations_table.php',
-    'CreateLocaleTable' => $baseDir . '/database/migrations/2015_12_10_062241_create_locale_table.php',
+    'CreateLocaleTable' => $baseDir . '/database/migrations/2015_12_08_062241_create_locale_table.php',
     'DatabaseSeeder' => $baseDir . '/database/seeds/DatabaseSeeder.php',
     'File_Iterator' => $vendorDir . '/phpunit/php-file-iterator/src/Iterator.php',
     'File_Iterator_Facade' => $vendorDir . '/phpunit/php-file-iterator/src/Facade.php',

@@ -110,7 +110,10 @@ abstract class Field {
 
 		//set the title if it doesn't exist
 		$options['title'] = $this->validator->arrayGet($options, 'title', $options['field_name']);
-
+		// dd($options);
+		// echo "<pre>";
+		// var_dump($options);
+		// echo "</pre>";
 		//run the visible property closure if supplied
 		$visible = $this->validator->arrayGet($options, 'visible');
 

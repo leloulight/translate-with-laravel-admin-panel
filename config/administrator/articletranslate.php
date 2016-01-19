@@ -12,6 +12,8 @@ return array(
 		'title' => array(
 			'title' => 'title',
 		),
+		'body' => array(
+			'title' => 'body'),
 
 		'toLocale' => array(
 			'type' => 'relationship',
@@ -40,8 +42,12 @@ return array(
 	),
 	'edit_fields' => array(
 		'title' => array(
-			'title' => "Translated Text",
+			'title' => "Translated Article Article",
 			'type' => 'text',
+		),
+		'body' => array(
+			'title' => "Translated Body",
+			'type' => 'textarea',
 		),
 		'toLocale' => array(
 			'title' => 'Select Language',
